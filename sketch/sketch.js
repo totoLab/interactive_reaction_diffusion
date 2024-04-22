@@ -2,7 +2,7 @@
 
 const TESTING = false;
 
-const DIMENSION = 200;
+const DIMENSION = 400;
 const D_A = 1;
 const D_B = 0.5;
 const FEED = 0.055;
