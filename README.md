@@ -31,4 +31,4 @@ You can adjust the following parameters in the code to modify the simulation beh
 
 ## Credits
 
-This simulation is based on the work of Karl Sims. The code structure and some implementation details are adapted from [Antonio Loquercio's p5.js sketch](https://editor.p5js.org/antolab/sketches/7P59v_3lk).
+This simulation is based on the work of The Coding Train. The code structure and some implementation details are adapted from this [p5.js sketch](https://editor.p5js.org/codingtrain/sketches/govdEW5aE).
