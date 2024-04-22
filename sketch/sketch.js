@@ -1,5 +1,7 @@
 // Reference: http://karlsims.com/rd.html
 
+TESTING = false;
+
 var grid;
 var next;
 
@@ -8,21 +10,67 @@ var dB = 0.5;
 var feed = 0.055;
 var k = 0.062;
 
+const pressed = new Set();
+
 function initialPoints() {
-  rectangle(60, 60, 30, 30);
-  rectangle(150, 60, 5, 30);
-  rectangle(20, 140, 60, 20);
-  circular(170, 20, 20);
-  circular(120, 180, 10);
-  circular(150, 180, 10);
-  circular(180, 180, 10);
-  
+  if (!TESTING) {
+    rectangle(60, 60, 30, 30);
+    rectangle(150, 60, 5, 30);
+    rectangle(20, 140, 60, 20);
+    circular(170, 20, 20);
+    circular(120, 180, 10);
+    circular(150, 180, 10);
+    circular(180, 180, 10);
+  }
 }
 
 function setup() {
-  dim = 200
+  dim = 200;
   createCanvas(dim, dim);
   pixelDensity(1);
+  
+  initializeData();
+  initialPoints();
+  
+  canSimulate = false;
+}
+
+function draw() {
+  background(51);
+  
+  KEY_D = 68;
+  if (keyIsDown(KEY_D)) {
+    x = mouseX;
+    y = mouseY;
+    fillPoint(x, y);
+  }
+  
+  if (canSimulate) {
+    updatePoints();
+  }
+  
+  recolorPixels();
+}
+
+function keyPressed(evt) {
+  const {code} = evt;
+
+  if (!pressed.has(code)) {
+    pressed.add(code);
+
+    if (pressed.has("Space")) {
+      canStart = !canStart;
+    } else if (pressed.has("KeyR")) {
+      initializeData();
+    }
+  }
+}
+
+function keyReleased(evt) {
+  pressed.delete(evt.code);
+}
+
+function initializeData() {
   grid = [];
   next = [];
   for (var x = 0; x < width; x++) {
@@ -39,13 +87,9 @@ function setup() {
       };
     }
   }
-  
-  initialPoints();
 }
 
-function draw() {
-  background(51);
-
+function updatePoints() {
   for (var x = 1; x < width - 1; x++) {
     for (var y = 1; y < height - 1; y++) {
       var a = grid[x][y].a;
@@ -63,7 +107,12 @@ function draw() {
       next[x][y].b = constrain(next[x][y].b, 0, 1);
     }
   }
+  
 
+  swap();
+}
+
+function recolorPixels() {
   loadPixels();
   for (var x = 0; x < width; x++) {
     for (var y = 0; y < height; y++) {
@@ -79,8 +128,6 @@ function draw() {
     }
   }
   updatePixels();
-
-  swap();
 }
 
 function laplace(x, y, targetVar) {
@@ -113,8 +160,7 @@ function laplaceB(x, y) {
 function rectangle(startX, startY, length, wideness) {
    for (var i = startX; i < startX+length; i++) {
     for (var j = startY; j < startY+wideness; j++) {
-      grid[i][j].b = 1;
-      next[i][j].b = 1;
+      fillPoint(i, j);
     }
   }
 }
@@ -125,11 +171,15 @@ function circular(centerX, centerY, radius) {
       a = i - centerX
       b = j - centerY
       if (a*a + b*b <= radius*radius) {
-        grid[i][j].b = 1;
-        next[i][j].b = 1;
+        fillPoint(i, j);
       }      
     }
   }
+}
+
+function fillPoint(i, j) {
+  grid[i][j].b = 1;
+  next[i][j].b = 1;
 }
 
 function swap() {
