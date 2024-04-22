@@ -2,11 +2,13 @@
 
 const TESTING = false;
 
+
 const DIMENSION = 400;
 const D_A = 1;
 const D_B = 0.5;
 const FEED = 0.055;
 const K = 0.062;
+let speedFactor = 1;
 
 const laplaceWeights = [
   [0.05, 0.2, 0.05],
@@ -79,16 +81,20 @@ function updatePoints() {
       const lapA = laplace(x, y, 'a');
       const lapB = laplace(x, y, 'b');
 
-      next[x][y].a = a + (D_A * lapA) - (a * b * b) + (FEED * (1 - a));
-      next[x][y].b = b + (D_B * lapB) + (a * b * b) - ((K + FEED) * b);
+      const deltaA = (D_A * lapA) - (a * b * b) + (FEED * (1 - a));
+      const deltaB = (D_B * lapB) + (a * b * b) - ((K + FEED) * b);
 
-      next[x][y].a = constrain(next[x][y].a, 0, 1);
-      next[x][y].b = constrain(next[x][y].b, 0, 1);
+      newA = a + deltaA * speedFactor;
+      newB = b + deltaB * speedFactor;
+
+      next[x][y].a = constrain(newA, 0, 1);
+      next[x][y].b = constrain(newB, 0, 1);
     }
   }
 
   swap();
 }
+
 
 function recolorPixels() {
   loadPixels();
