@@ -150,8 +150,13 @@ function circular(centerX, centerY, radius) {
 }
 
 function fillPoint(i, j) {
-  grid[i][j].b = 1;
-  next[i][j].b = 1;
+  if (
+    0 <= i && i < DIMENSION &&
+    0 <= j && j < DIMENSION
+  ) {
+    grid[i][j].b = 1;
+    next[i][j].b = 1;
+  }
 }
 
 function swap() {
